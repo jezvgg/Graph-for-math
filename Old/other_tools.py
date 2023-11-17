@@ -30,10 +30,23 @@ def print_graph(graph):
     plt.show()
 
 graph1 = nx.Graph()
-graph1.add_edges_from([("A", "B"), ("A", "C"), ("B", "C"), ("A", "E"), ("E", "K")])
+
+graph1.add_edges_from([("A","B"), ("A","C"), ("A","E"),("A","F"),
+                        ("B","D"), ("B","E"), ("B","F"),
+                         ("C","D"), ("C","E"), ("C","F"),
+                           ("D","E"), ("D","F")])
+
+
 
 graph2 = nx.Graph()
-graph2.add_edges_from([("X", "Y"), ("X", "Z"), ("Y", "Z")])
+
+
+graph2.add_edges_from([("A","B"), ("A","C"), ("A","E"),("A","F"),
+                       ("B", "C"), ("B", "D"), ("B", "F"),
+                       ("C", "D"), ("C", "E"),
+                       ("D", "E"), ("D", "F"),
+                       ("E", "F")
+                       ])
 
 if isomorphic(graph1, graph2):
     print("Графы изоморфны")
