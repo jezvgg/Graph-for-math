@@ -1,0 +1,2 @@
+class verticle:
+    pass
