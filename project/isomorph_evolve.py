@@ -1,25 +1,16 @@
-python
 from random import randint, seed, choice, random, choices 
 from test import coding_data, create_test 
 import matplotlib.pyplot as plt 
-import time 
+from graph import Graph
  
-NUMBER_COUNT = 10 
-NUMERS_LENGHT = 10  
-MAX_SYSTEM = 10 # максимальный размер СС 
- 
-test = create_test(NUMBER_COUNT, NUMERS_LENGHT, MAX_SYSTEM, 9) 
-DATA = test['data'] 
-C_SUM = test['c_sum'] 
-N_SYSTEM = test['n_system'] 
- 
-print('0123456789abcdefghijklmnopqrstuv'[:N_SYSTEM]) 
- 
-POPULATION_SIZE = 10000 # количество особий в пополяции 
+
+GOAL_MATRIX = Graph({"A":"BCEF", "B":"ACDF", "C":"ABDE", "D":"BCEF", "E":"ACDF", "F":"ABDE"})
+OUR_MATRIX = Graph({"A":"BCEF", "B":"ADEF", "C":"ADEF", "D":"BCEF", "E":"ABCD", "F":"ABCD"})
+
+POPULATION_SIZE = 100 # количество особий в пополяции 
 P_CROSSOVER = 0.9   # вероятность скрещивания 
-P_MUTATION = 0.05    # вероятность мутации 
-MAX_GENERATION = 200 # максимальное количество поколений 
-GENERATION_COUNT = 1000 # количество популяций 
+P_MUTATION = 0.1    # вероятность мутации 
+MAX_GENERATION = 50 # максимальное количество поколений 
  
 GOAL = 0 # цель приспособленности особи 
  
@@ -37,25 +28,22 @@ class Individual(list):
         self.fitness = FitnessMax() 
  
  
-def oneMaxFintess(individual, code_debug: dict = False): 
+def oneMaxFintess(ind: Individual): 
     ''' 
     Рассчитывает приспособленность особи к задаче. 
+
+    Будем смотреть насколько близко к итоговой матрице находиться наша.
+
+    Для этого дадим каждому столбцу вес (1,2,3,4...) и будем умножать на него, если там единица.
+
+    Потом будем суммировать всё и брать разницу между итоговой матрицей. И возращать модуль разницы. Нужно чтоб она была 0.
     ''' 
-    system = '0123456789abcdefghijklmnopqrstuv'[:N_SYSTEM] 
-    code = dict(zip(individual, list(system))) 
-    if code_debug: code = code_debug 
-    data, c_sum = coding_data(DATA, C_SUM, code) 
-    return abs(int(c_sum,N_SYSTEM)-sum(map(lambda x: int(x, N_SYSTEM), data))) 
+    return sum([abs(sum([el*(i+1) for i,el in enumerate(row1)])-sum([el*(i+1) for i,el in enumerate(row2)])) for row1, row2 in zip(GOAL_MATRIX.matrix, ind.matrix)])
  
  
 def individualCreator(): 
-    system = '0123456789abcdefghijklmnopqrstuv'[:N_SYSTEM] 
-    objct = [] 
-    while system!='': 
-        sub = choice(system) 
-        objct.append(sub) 
-        system = system.replace(sub, '') 
-    return Individual(objct) 
+    verts = GOAL_MATRIX.verticles
+    
  
  
 def populationCreator(n: int = 0): 

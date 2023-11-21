@@ -19,6 +19,10 @@ class Graph:
         self.matrix = np.array(matrix)
 
 
+    def __eq__(self, __o: object) -> bool:
+        return np.array_equal(self.matrix, __o.matrix)
+
+
     def __str__(self):
         result = "  "+"".join(self.verticles)+"\n"
         for i,row in enumerate(self.matrix):
@@ -30,6 +34,9 @@ class Graph:
         '''
         Меняет вершины по заданым индексам.
         '''
+        if len(indexes) != len(self.verticles):
+            raise IndexError(f"indexes must be len of {len(self.verticles)}")
+
         new_matrix = self.matrix[indexes]
         self.matrix = new_matrix[:, indexes]
         self.__verticles = [self.verticles[x] for x in indexes]
@@ -45,13 +52,25 @@ class Graph:
         self.set(indexes)
 
 
+    def copy(self):
+        return Graph(self.dict)
+
+
+    @property
+    def dict(self):
+        review = {}
+        for vert, row in zip(self.__verticles, self.matrix):
+            review[vert] = ''.join([self.__verticles[i] for i,sym in enumerate(row) if sym])
+        return review
+
+
     @property
     def verticles(self):
         return self.__verticles
 
 
     @verticles.setter
-    def verticles(self, verts: dict[str|verticle]):
+    def verticles(self, verts):
         verts = list(verts.keys())
         if isinstance(verts[0], verticle):
             self.__verticles = [x.name for x in verts]
@@ -60,9 +79,12 @@ class Graph:
 
 
 if __name__ == "__main__":
-    g = Graph({"A":"BC", "B":"ABC", "C":"AB"})
+    g = Graph({"A":"BCEF", "B":"ACDF", "C":"ABDE", "D":"BCEF", "E":"ACDF", "F":"ABDE"})
     print(g)
-    g.replace("A","B")
+    h = g.copy()
+    print(h)
+    g.replace('A', 'B')
     print(g)
-    g.set([0,2,1])
-    print(g)
+    print(h)
+    
+    
