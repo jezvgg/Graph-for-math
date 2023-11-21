@@ -30,7 +30,7 @@ class Graph:
         return result
 
 
-    def set(self, indexes: list):
+    def set(self, indexes: list[int]):
         '''
         Меняет вершины по заданым индексам.
         '''

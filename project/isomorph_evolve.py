@@ -1,5 +1,4 @@
-from random import randint, seed, choice, random, choices, sample
-from test import coding_data, create_test 
+from random import seed, random, choices, sample
 import matplotlib.pyplot as plt 
 from graph import Graph
  
@@ -36,18 +35,17 @@ def oneMaxFintess(ind: Individual):
     return sum([abs(sum([el*(i+1) for i,el in enumerate(row1)])-sum([el*(i+1) for i,el in enumerate(row2)])) for row1, row2 in zip(GOAL_MATRIX.matrix, ind.matrix)])
  
  
-def individualCreator(): 
+def individualCreator() -> Individual: 
     '''
     Копируем нашу матрицу, и переставляем случайным образом вершины.
     '''
-    verts = OUR_MATRIX.verticles
-    samples = sample(verts, k=len(OUR_MATRIX.verticles))
+    samples = sample(list(range(len(OUR_MATRIX.verticles))), k=len(OUR_MATRIX.verticles))
     ind = OUR_MATRIX.copy()
     ind.set(samples)
     return ind
     
  
-def populationCreator(n: int = 0): 
+def populationCreator(n: int = 0) -> list[Individual]: 
     return list([individualCreator() for i in range(n)]) 
  
  
@@ -58,13 +56,10 @@ def clone(ind):
     return new_ind
  
  
-def sel_tournament(population, p_len): # fitness proportional selection 
+def sel_tournament(population: list[Individual], p_len): # fitness proportional selection 
     offspring = [] 
     for _ in range(p_len): 
-        ind1, ind2, ind3 = choice(population), choice(population), choice(population) 
-        while ind1==ind2 or ind2==ind3 or ind1==ind3: 
-            ind1, ind2, ind3 = choice(population), choice(population), choice(population) 
- 
+        ind1, ind2, ind3 = sample(population, k=3)
         offspring.append(min([ind1, ind2, ind3], key=lambda x: x.fitness)) 
  
     return offspring 
@@ -82,81 +77,68 @@ def FPS_rang(population, p_len):
     return choices(sorted(population, key=lambda x: x.fitness, reverse=True), weights=weights, k=p_len) 
  
  
-def crossingover(child1, child2):
+def crossingover(child1: Individual, child2: Individual):
     '''
-    Переделать и всё что ниже
+    С определённой вероятностью меняем местами некоторые индексы
     ''' 
-    for indx, _ in enumerate(child1): 
-        if random() < 0.3: 
-            sym1 = child1[indx] 
-            sym2 = child2[indx] 
-            child1[child1.index(sym2)] = sym1 
-            child1[indx] = sym2 
-            child2[child2.index(sym1)] = sym2 
-            child2[indx] = sym1 
+    for vert1, vert2 in zip(child1.verticles, child2.verticles):
+        if random < 0.3:
+            child1.replace(vert1, vert2)
+            child2.replace(vert2, vert1)
+
  
- 
-def mutation(ind, mutv=0.005): 
-    for i, _ in enumerate(ind): 
+def mutation(ind: Individual, mutv=0.05): 
+    for _ in enumerate(ind): 
         if random() < mutv: 
-            ind1, ind2 = randint(0,len(ind)-1), randint(0,len(ind)-1) 
-            while ind1==ind2: 
-                ind1, ind2 = randint(0,len(ind)-1), randint(0,len(ind)-1) 
-            ind[ind1], ind[ind2] = ind[ind2], ind[ind1] 
- 
+            vert1, vert2 = sample(ind.verticles, k=2)
+            ind.replace(vert1, vert2)
  
  
 if __name__ == "__main__": 
-    max_fitnesses = [] 
-    mean_fitnesses = [] 
-    for i in range(GENERATION_COUNT): 
-        population = populationCreator(n=POPULATION_SIZE) 
-        gen_counter = 0 
+    population = populationCreator(n=POPULATION_SIZE) 
+    gen_counter = 0 
  
-        fintess_values = list(map(oneMaxFintess, population)) 
+    fintess_values = list(map(oneMaxFintess, population)) 
  
-        for individual, fintess_value in zip(population, fintess_values): 
-            individual.fitness.values = fintess_value 
+    for individual, fintess_value in zip(population, fintess_values): 
+        individual.fitness = fintess_value 
  
-        fintess_values = [ind.fitness.values for ind in population] 
+    fintess_values = [ind.fitness for ind in population] 
  
-        mean_fitness = [] 
-        # mean_fitness_ = sum(fintess_values) / len(fintess_values) 
-        max_fitness = [] 
-        # max_fitness_ = min(fintess_values) 
+    mean_fitness = [] 
+    max_fitness = [] 
+
+    print(f'Поколение {gen_counter}: Макс. приспособ. = {max_fitness}, Сред. приспособ = {mean_fitness}') 
+    print(f'Лучший индивидуум: {min(population, key=lambda x: x.fitness)}\n') 
  
-        while min(fintess_values) > GOAL and gen_counter < MAX_GENERATION: 
-            gen_counter += 1 
+    while min(fintess_values) > GOAL and gen_counter < MAX_GENERATION: 
+        gen_counter += 1 
  
-            offspring = sel_tournament(population, len(population)) 
-            offspring = list(map(clone, offspring)) 
+        offspring = sel_tournament(population, len(population)) 
+        offspring = list(map(clone, offspring)) 
  
-            for child1, child2 in zip(offspring[::2], offspring[1::2]): 
-                if random() < P_CROSSOVER: 
-                    crossingover(child1, child2) 
+        for child1, child2 in zip(offspring[::2], offspring[1::2]): 
+            if random() < P_CROSSOVER: 
+                crossingover(child1, child2) 
  
-            for mutant in offspring: 
-                if random() < P_MUTATION: 
-                    mutation(mutant, mutv=1.0/(4*NUMERS_LENGHT)) 
+        for mutant in offspring: 
+            if random() < P_MUTATION: 
+                mutation(mutant, mutv=0.05) 
  
-            fresh_fintess_values = list(map(oneMaxFintess, offspring)) 
-            for ind, fintess_value in zip(offspring, fresh_fintess_values): 
-                ind.fitness.values = fintess_value 
+        fresh_fintess_values = list(map(oneMaxFintess, offspring)) 
+        for ind, fintess_value in zip(offspring, fresh_fintess_values): 
+            ind.fitness = fintess_value 
  
-            population[:] = offspring 
+        population[:] = offspring 
  
-            fintess_values = [ind.fitness.values for ind in population] 
+        fintess_values = [ind.fitness for ind in population] 
  
-            max_fitness_ = min(fintess_values) 
-            max_fitness.append(max_fitness_) 
-            mean_fitness_ = sum(fintess_values) / len(fintess_values) 
-            mean_fitness.append(mean_fitness_) 
-            # print(f'Поколение {gen_counter}: Макс. приспособ. = {max_fitness_}, Сред. приспособ = {mean_fitness_}') 
-            # print(f'Лучший индивидуум: {min(population, key=lambda x: x.fitness.values)}\n') 
-        max_fitnesses.append(max_fitness_)  
-        mean_fitnesses.append(mean_fitness_) 
-        print(f'Популяция {i+1} лучший индивидуум {max_fitness_}, средняя приспособленность {mean_fitness_}') 
-        if max_fitness_ == 0: break 
+        max_fitness_ = min(fintess_values) 
+        max_fitness.append(max_fitness_) 
+        mean_fitness_ = sum(fintess_values) / len(fintess_values) 
+        mean_fitness.append(mean_fitness_) 
+        print(f'Поколение {gen_counter}: Макс. приспособ. = {max_fitness_}, Сред. приспособ = {mean_fitness_}') 
+        print(f'Лучший индивидуум: {min(population, key=lambda x: x.fitness)}\n') 
         # fig, axis = plt.subplots(1,2) 
         # plt.plot(range(gen_counter), max_fitness) 
         # plt.plot(range(gen_counter), mean_fitness) 
