@@ -1,4 +1,4 @@
-from random import randint, seed, choice, random, choices 
+from random import randint, seed, choice, random, choices, sample
 from test import coding_data, create_test 
 import matplotlib.pyplot as plt 
 from graph import Graph
@@ -17,15 +17,10 @@ GOAL = 0 # цель приспособленности особи
 seed(42) 
  
  
-class FitnessMax(): 
-    def __init__(self): 
-        self.values = 0 
- 
- 
-class Individual(list): 
+class Individual(Graph): 
     def __init__(self, *args): 
         super().__init__(*args) 
-        self.fitness = FitnessMax() 
+        self.fitness = 0
  
  
 def oneMaxFintess(ind: Individual): 
@@ -42,18 +37,25 @@ def oneMaxFintess(ind: Individual):
  
  
 def individualCreator(): 
-    verts = GOAL_MATRIX.verticles
+    '''
+    Копируем нашу матрицу, и переставляем случайным образом вершины.
+    '''
+    verts = OUR_MATRIX.verticles
+    samples = sample(verts, k=len(OUR_MATRIX.verticles))
+    ind = OUR_MATRIX.copy()
+    ind.set(samples)
+    return ind
     
- 
  
 def populationCreator(n: int = 0): 
     return list([individualCreator() for i in range(n)]) 
  
  
-def clone(value): 
-    individ = Individual(value[:]) 
-    individ.fitness.values = value.fitness.values 
-    return individ 
+def clone(ind): 
+    fit = ind.fitness
+    new_ind = Individual(ind.dict)
+    new_ind.fitness = fit
+    return new_ind
  
  
 def sel_tournament(population, p_len): # fitness proportional selection 
@@ -63,24 +65,27 @@ def sel_tournament(population, p_len): # fitness proportional selection
         while ind1==ind2 or ind2==ind3 or ind1==ind3: 
             ind1, ind2, ind3 = choice(population), choice(population), choice(population) 
  
-        offspring.append(min([ind1, ind2, ind3], key=lambda x: x.fitness.values)) 
+        offspring.append(min([ind1, ind2, ind3], key=lambda x: x.fitness)) 
  
     return offspring 
  
  
 def FPS(population, p_len): 
-    weights=[x.fitness.values for x in population] 
+    weights=[x.fitness for x in population] 
     max_weight = max(weights) 
     weights = [max_weight-x for x in weights] 
     return choices(population, weights=weights, k=p_len) 
  
  
 def FPS_rang(population, p_len): 
-    weights = [indx+1 for indx, _ in enumerate(sorted(population, key=lambda x: x.fitness.values, reverse=True))] 
-    return choices(sorted(population, key=lambda x: x.fitness.values, reverse=True), weights=weights, k=p_len) 
+    weights = [indx+1 for indx, _ in enumerate(sorted(population, key=lambda x: x.fitness, reverse=True))] 
+    return choices(sorted(population, key=lambda x: x.fitness, reverse=True), weights=weights, k=p_len) 
  
  
-def crossingover(child1, child2): 
+def crossingover(child1, child2):
+    '''
+    Переделать и всё что ниже
+    ''' 
     for indx, _ in enumerate(child1): 
         if random() < 0.3: 
             sym1 = child1[indx] 
