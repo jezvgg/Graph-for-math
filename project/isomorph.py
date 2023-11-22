@@ -4,7 +4,7 @@ from itertools import permutations
 
 
 def isomorph_exp(goal_matrix: Graph, our_matrix: Graph) -> tuple[bool, Graph]:
-    for combo in permutations(range(6)):
+    for combo in permutations(range(len(our_matrix.verticles))):
         new_matrix = our_matrix.copy()
         new_matrix.set(list(combo))
         if goal_matrix == new_matrix:
