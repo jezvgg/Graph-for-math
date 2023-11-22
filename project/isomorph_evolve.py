@@ -140,7 +140,7 @@ def isomorph_evolve(goal_matrix: Graph, our_matrix: Graph, POPULATION_SIZE = 100
         mean_fitness_ = sum(fintess_values) / len(fintess_values) 
         mean_fitness.append(mean_fitness_) 
 
-    return max_fitness_==0, min(population, key=lambda x: x.fitness)
+    return max_fitness_==0, min(population, key=lambda x: x.fitness).copy()
 
 
 if __name__ == "__main__":

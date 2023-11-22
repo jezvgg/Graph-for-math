@@ -26,3 +26,15 @@ print(datetime.now() - start_time)
 start_time = datetime.now()
 print(isomorph_evolve(goal_matrix=goal_graph, our_matrix=our_graph))
 print(datetime.now() - start_time)
+
+# Test 3
+goal_graph = Graph({"a":"bfi", "b":"ach", "c":"bdg", "d":"cei", "e":"dfh", "f":"aeg", "g":"cfj", "h":"bej", "i":"adj", "j":"ghi"})
+our_graph = Graph({"a":"bef", "b":"acg","c":"bdh", "d":"cei", "e":"adj", "f":"ahi", "g":"bij", "h":"cfj", "i":"dfg", "j":"egh"})
+
+start_time = datetime.now()
+print(isomorph_exp(goal_matrix=goal_graph, our_matrix=our_graph))
+print(datetime.now() - start_time)
+
+start_time = datetime.now()
+print(isomorph_evolve(goal_matrix=goal_graph, our_matrix=our_graph))
+print(datetime.now() - start_time)

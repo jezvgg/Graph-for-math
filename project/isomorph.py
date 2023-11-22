@@ -4,13 +4,13 @@ from itertools import permutations
 
 
 def isomorph_exp(goal_matrix: Graph, our_matrix: Graph) -> tuple[bool, Graph]:
+    result = False, our_matrix
     for combo in permutations(range(len(our_matrix.verticles))):
         new_matrix = our_matrix.copy()
         new_matrix.set(list(combo))
         if goal_matrix == new_matrix:
-            return True, new_matrix
-    else:
-        return False, our_matrix
+            result = True, new_matrix
+    return result
 
 
 if __name__ == "__main__":
