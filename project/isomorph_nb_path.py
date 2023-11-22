@@ -2,6 +2,7 @@ def isomorphic(graph1, graph2):
     if len(graph1) != len(graph2):
         return False
     visited = set()
+
     def dfs(v1, v2):
         if (v1, v2) in visited:
             return True
@@ -14,6 +15,7 @@ def isomorphic(graph1, graph2):
             if not dfs(n1, n2):
                 return False
         return True
+        
     for v1 in graph1:
         for v2 in graph2:
             visited.clear()
