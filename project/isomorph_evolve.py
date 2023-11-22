@@ -1,17 +1,6 @@
 from random import seed, random, choices, sample
-import matplotlib.pyplot as plt 
 from graph import Graph
  
-
-GOAL_MATRIX = Graph({"A":"BCEF", "B":"ACDF", "C":"ABDE", "D":"BCEF", "E":"ACDF", "F":"ABDE"})
-OUR_MATRIX = Graph({"A":"BCEF", "B":"ADEF", "C":"ADEF", "D":"BCEF", "E":"ABCD", "F":"ABCD"})
-
-POPULATION_SIZE = 100 # количество особий в пополяции 
-P_CROSSOVER = 0.9   # вероятность скрещивания 
-P_MUTATION = 0.1    # вероятность мутации 
-MAX_GENERATION = 50 # максимальное количество поколений 
- 
-GOAL = 0 # цель приспособленности особи 
  
 seed(42) 
  
@@ -82,19 +71,34 @@ def crossingover(child1: Individual, child2: Individual):
     С определённой вероятностью меняем местами некоторые индексы
     ''' 
     for vert1, vert2 in zip(child1.verticles, child2.verticles):
-        if random < 0.3:
+        if random() < 0.3:
             child1.replace(vert1, vert2)
             child2.replace(vert2, vert1)
 
  
 def mutation(ind: Individual, mutv=0.05): 
-    for _ in enumerate(ind): 
+    for _ in enumerate(ind.verticles): 
         if random() < mutv: 
             vert1, vert2 = sample(ind.verticles, k=2)
             ind.replace(vert1, vert2)
  
  
-if __name__ == "__main__": 
+def isomorph_evolve(goal_matrix: Graph, our_matrix: Graph, POPULATION_SIZE = 100, P_CROSSOVER = 0.9, P_MUTATION = 0.1, MAX_GENERATION = 50) -> tuple[bool, Graph]:
+    '''
+    Эврестический алгоритм который проверяет являются ли графы изоморфны и ищет подстановку,
+
+    при которой матрицы смежности графов совпадают.
+    '''
+
+    global GOAL_MATRIX
+    GOAL_MATRIX = goal_matrix
+    global OUR_MATRIX 
+    OUR_MATRIX = our_matrix
+    
+    GOAL = 0 # цель приспособленности особи 
+    
+    seed(42) 
+    
     population = populationCreator(n=POPULATION_SIZE) 
     gen_counter = 0 
  
@@ -107,9 +111,7 @@ if __name__ == "__main__":
  
     mean_fitness = [] 
     max_fitness = [] 
-
-    print(f'Поколение {gen_counter}: Макс. приспособ. = {max_fitness}, Сред. приспособ = {mean_fitness}') 
-    print(f'Лучший индивидуум: {min(population, key=lambda x: x.fitness)}\n') 
+    max_fitness_ = min(fintess_values)
  
     while min(fintess_values) > GOAL and gen_counter < MAX_GENERATION: 
         gen_counter += 1 
@@ -137,10 +139,13 @@ if __name__ == "__main__":
         max_fitness.append(max_fitness_) 
         mean_fitness_ = sum(fintess_values) / len(fintess_values) 
         mean_fitness.append(mean_fitness_) 
-        print(f'Поколение {gen_counter}: Макс. приспособ. = {max_fitness_}, Сред. приспособ = {mean_fitness_}') 
-        print(f'Лучший индивидуум: {min(population, key=lambda x: x.fitness)}\n') 
-        # fig, axis = plt.subplots(1,2) 
-        # plt.plot(range(gen_counter), max_fitness) 
-        # plt.plot(range(gen_counter), mean_fitness) 
-        # plt.show() 
-        # break
+
+    return max_fitness_==0, min(population, key=lambda x: x.fitness)
+
+
+if __name__ == "__main__":
+    result = isomorph_evolve(goal_matrix=Graph({"A":"BCEF", "B":"ACDF", "C":"ABDE", "D":"BCEF", "E":"ACDF", "F":"ABDE"}),
+    our_matrix=Graph({"A":"BCEF", "B":"ADEF", "C":"ADEF", "D":"BCEF", "E":"ABCD", "F":"ABCD"}))
+
+    print(result[0])
+    print(result[1])
