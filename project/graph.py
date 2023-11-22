@@ -1,5 +1,5 @@
 import numpy as np
-from verticle import verticle
+from project.verticle import verticle
 
 class Graph:
     '''

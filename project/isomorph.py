@@ -1,5 +1,5 @@
 import numpy as np
-from graph import Graph
+from project.graph import Graph
 from itertools import permutations
 
 

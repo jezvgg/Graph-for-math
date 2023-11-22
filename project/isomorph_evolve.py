@@ -1,5 +1,5 @@
 from random import seed, random, choices, sample
-from graph import Graph
+from project.graph import Graph
  
  
 seed(42) 
