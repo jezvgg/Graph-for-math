@@ -63,9 +63,10 @@ print("Test 5")
 goal_graph = Graph({"a":"bfi", "b":"ach", "c":"bdg", "d":"cei", "e":"dfh", "f":"aeg", "g":"cfj", "h":"bej", "i":"adj", "j":"ghi"})
 our_graph = Graph({"a":"bef", "b":"acg","c":"bdh", "d":"cei", "e":"adj", "f":"ahi", "g":"bij", "h":"cfj", "i":"dfg", "j":"egh"})
 
-start_time = datetime.now()
-print(isomorph_exp(goal_matrix=goal_graph, our_matrix=our_graph))
-print(datetime.now() - start_time)
+# start_time = datetime.now()
+# print(isomorph_exp(goal_matrix=goal_graph, our_matrix=our_graph))
+# print(datetime.now() - start_time)
+print("exp works ~1m 33sec")
 
 start_time = datetime.now()
 print(isomorph_evolve(goal_matrix=goal_graph, our_matrix=our_graph))
@@ -84,4 +85,18 @@ print("exp work ~20 minutes")
 
 start_time = datetime.now()
 print(isomorph_evolve(goal_matrix=goal_graph, our_matrix=our_graph))
+print(datetime.now() - start_time)
+
+print("Test 7")
+goal_graph = Graph({"a":"hijkl", "b":"i", "c":"i", "d":"jk", "e":"jkl", "f":"jkl", "g":"kl", "h":"ajkl","i":"abck","j":"adefhk", "k":"adefghij", "l":"aefgh"})
+our_graph = goal_graph.copy()
+our_graph.set(sample(range(12), k=12))
+
+# start_time = datetime.now()
+# print(isomorph_exp(goal_matrix=goal_graph, our_matrix=our_graph))
+# print(datetime.now() - start_time)
+print("exp work too long")
+
+start_time = datetime.now()
+print(isomorph_evolve(goal_matrix=goal_graph, our_matrix=our_graph, MAX_GENERATION=100, POPULATION_SIZE=500))
 print(datetime.now() - start_time)
