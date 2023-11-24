@@ -23,10 +23,40 @@ class Graph:
         return np.array_equal(self.matrix, __o.matrix)
 
 
+    def __and__(self, __o: "Graph"):
+        result = self.copy()
+        result.matrix = (self.matrix+__o.matrix==2).astype(int)
+        return result
+
+
+    def __or__(self, __o: "Graph"):
+        result = self.copy()
+        result.matrix = (self.matrix+__o.matrix>0).astype(int)
+        return result
+
+
+    def __sub__(self, __o: "Graph"):
+        result = self.copy()
+        result.matrix = (self.matrix-__o.matrix>0).astype(int)
+        return result
+
+
+    def __xor__(self, __o: "Graph"):
+        result = self.copy()
+        result.matrix = (self.matrix!=__o.matrix).astype(int)
+        return result
+
+
     def __str__(self):
         result = "  "+"".join(self.verticles)+"\n"
         for i,row in enumerate(self.matrix):
             result += self.verticles[i] + " " + "".join(map(str,row))+"\n"
+        return result
+
+
+    def __invert__(self):
+        result = self.copy()
+        result.matrix = (self.matrix==0).astype(int)
         return result
 
 
@@ -79,12 +109,14 @@ class Graph:
 
 
 if __name__ == "__main__":
-    g = Graph({"A":"BCEF", "B":"ACDF", "C":"ABDE", "D":"BCEF", "E":"ACDF", "F":"ABDE"})
-    print(g)
-    h = g.copy()
-    print(h)
-    g.replace('A', 'B')
-    print(g)
-    print(h)
+    g = Graph({'a':'ad','b':'ad','c':'bc','d':'bc'})
+    h=Graph({'a':'bd','b':'bc','c':'bc','d':'ac'})
+    print("graph G1:",g,sep="\n")
+    print("graph H1:",h,sep="\n")
+    print("graph G1 and H1:",g&h,sep="\n")
+    print("graph G1 or H1:",g|h,sep="\n")
+    print("graph G1 / H1:",g-h,sep="\n")
+    print("graph G1 xor H1:",g^h,sep="\n")
+    print("Invert G1:",~g)
     
     
