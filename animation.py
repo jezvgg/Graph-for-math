@@ -54,5 +54,5 @@ if __name__=="__main__":
         res_graph.plot()
 
     anim = FuncAnimation(fig=fig, func=update, frames=24, interval=30, repeat=False)
-    anim.save("simple_animation.gif", dpi=300,
-         writer=PillowWriter(fps=24))
+    anim.save("simple_animation24.gif", dpi=300, writer=PillowWriter(fps=24))
+    anim.save("simple_animation6.gif", dpi=300, writer=PillowWriter(fps=6))
