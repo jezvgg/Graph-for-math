@@ -1,5 +1,5 @@
 import numpy as np
-from project.verticle import verticle
+from verticle import verticle
 import matplotlib.pyplot as plt
 
 
@@ -88,10 +88,23 @@ class Graph:
         return Graph(self.dict)
 
 
-    def plot(self):
+    def plot(self, x=0, y=0):
+        '''
+        x,y - смещение построения графа, если координаты вершин не заданы
+        '''
         if not isinstance(self.verticles, verticle):
-            space = np.linspace(0, 2*np.pi, len(self.verticles))
-            self.verticles = [verticle() for name, sp in zip(self.verticles, space)]
+            space = np.linspace(0, 2*np.pi, len(self.verticles)+1)[:-1]
+            self.__verticles = [verticle(name, np.cos(sp)+x, np.sin(sp)+y) for name, sp in zip(self.verticles, space)]
+
+        for i,row in enumerate(self.matrix):
+            for j,elem in enumerate(row):
+                if not elem: continue
+                plt.plot([self.verticles[i].x, self.verticles[j].x], [self.verticles[i].y, self.verticles[j].y], c='blue')
+
+        x = [v.x for v in self.verticles]
+        y = [v.y for v in self.verticles]
+        print(x, y)
+        plt.scatter(x,y, c='red')
 
 
 
@@ -118,14 +131,17 @@ class Graph:
 
 
 if __name__ == "__main__":
-    g = Graph({'a':'ad','b':'ad','c':'bc','d':'bc'})
+    g = Graph({'a':'ad','b':'ad','c':'bc','d':'bc', 'e':'ac', 'f':'bd'})
     h=Graph({'a':'bd','b':'bc','c':'bc','d':'ac'})
-    print("graph G1:",g,sep="\n")
-    print("graph H1:",h,sep="\n")
-    print("graph G1 and H1:",g&h,sep="\n")
-    print("graph G1 or H1:",g|h,sep="\n")
-    print("graph G1 / H1:",g-h,sep="\n")
-    print("graph G1 xor H1:",g^h,sep="\n")
-    print("Invert G1:",~g)
+    # print("graph G1:",g,sep="\n")
+    # print("graph H1:",h,sep="\n")
+    # print("graph G1 and H1:",g&h,sep="\n")
+    # print("graph G1 or H1:",g|h,sep="\n")
+    # print("graph G1 / H1:",g-h,sep="\n")
+    # print("graph G1 xor H1:",g^h,sep="\n")
+    # print("Invert G1:",~g)
+    g.plot(1, 1)
+    h.plot(3.2, 1)
+    plt.show()
     
     
