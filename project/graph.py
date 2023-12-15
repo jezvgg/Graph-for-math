@@ -1,5 +1,7 @@
 import numpy as np
 from project.verticle import verticle
+import matplotlib.pyplot as plt
+
 
 class Graph:
     '''
@@ -84,6 +86,13 @@ class Graph:
 
     def copy(self):
         return Graph(self.dict)
+
+
+    def plot(self):
+        if not isinstance(self.verticles, verticle):
+            space = np.linspace(0, 2*np.pi, len(self.verticles))
+            self.verticles = [verticle() for name, sp in zip(self.verticles, space)]
+
 
 
     @property
