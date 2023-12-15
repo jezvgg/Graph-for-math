@@ -92,9 +92,14 @@ class Graph:
         '''
         x,y - смещение построения графа, если координаты вершин не заданы
         '''
-        if not isinstance(self.verticles, verticle):
+        if not isinstance(self.verticles[0], verticle):
+            print("Перепись " + "="*32)
             space = np.linspace(0, 2*np.pi, len(self.verticles)+1)[:-1]
             self.__verticles = [verticle(name, np.cos(sp)+x, np.sin(sp)+y) for name, sp in zip(self.verticles, space)]
+
+        print([vert.name for vert in self.verticles])
+        print([vert.x for vert in self.verticles])
+        print([vert.y for vert in self.verticles])
 
         for i,row in enumerate(self.matrix):
             for j,elem in enumerate(row):
@@ -103,7 +108,6 @@ class Graph:
 
         x = [v.x for v in self.verticles]
         y = [v.y for v in self.verticles]
-        print(x, y)
         plt.scatter(x,y, c='red')
 
 
@@ -111,8 +115,13 @@ class Graph:
     @property
     def dict(self):
         review = {}
-        for vert, row in zip(self.__verticles, self.matrix):
-            review[vert] = ''.join([self.__verticles[i] for i,sym in enumerate(row) if sym])
+        if isinstance(self.__verticles[0],verticle): n_vert = [verticle(vert.name, vert.x, vert.y) for vert in self.verticles]
+        else: n_vert = self.__verticles
+        for vert, row in zip(n_vert, self.matrix):
+            if isinstance(vert,verticle):
+                review[vert] = [n_vert[i] for i,sym in enumerate(row) if sym]
+            else:
+                review[vert] = ''.join([self.__verticles[i] for i,sym in enumerate(row) if sym])
         return review
 
 
@@ -124,10 +133,7 @@ class Graph:
     @verticles.setter
     def verticles(self, verts):
         verts = list(verts.keys())
-        if isinstance(verts[0], verticle):
-            self.__verticles = [x.name for x in verts]
-        else:
-            self.__verticles = verts
+        self.__verticles = verts
 
 
 if __name__ == "__main__":
